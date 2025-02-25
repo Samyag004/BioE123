@@ -94,7 +94,7 @@ void loop() {
 
     /* currentRPM = (pulses_sec/sec) * 60.0 */
     double pulses_sec = pulses * (1000.0 / SAMPLE_MS); 
-    currentRPM = pulses_sec * 30.0 //divide 60 by 2 b/c 2 signals per rotation. 
+    currentRPM = pulses_sec * 30.0; //divide 60 by 2 b/c 2 signals per rotation. 
 
     /* update the PID computations*/ 
     double error = setRPM - currentRPM;
