@@ -1,0 +1,21 @@
+#install librries 
+sudo apt update
+sudo apt install python3-serial
+#check available serial ports
+ls /dev/ttyUSB0 or /dev/ttyACM0
+#reading the serial data on the raspberry pi we can use this for time remaining and rpm 
+import serial
+import time
+
+# Open the serial port (Change ttyUSB0 if necessary)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+time.sleep(2)  # Wait for connection
+
+try:
+    while True:
+        if ser.in_waiting > 0:
+            data = ser.readline().decode('utf-8').strip()
+            print(f"Received: {data}")
+except KeyboardInterrupt:
+    print("Exiting...")
+    ser.close()
