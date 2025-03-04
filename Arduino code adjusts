@@ -1,0 +1,18 @@
+#getting the arduino to read data from the raspberry pi
+
+// STATE: WAITING – Wait for user input.
+  if (state == WAITING) {
+    analogWrite(motor_gate_pin, 0); // ensure motor is off
+    if (Serial.available() > 0) {
+      // Read target RPM from serial
+      String set_RPM = Serial.readStringUntil('\\n'); #RPm from RasPi
+      Serial.print("Target RPM: ");
+      Serial.println(set_RPM);
+
+      Serial.println("Enter centrifugation time in seconds (max 600s):");
+      while (Serial.available() == 0) ; // wait for time input
+      String duration = Serial.readStringUntil('\\n'); #getting time from RasPi
+      Serial.print("Centrifugation time: ");
+      Serial.print(duration);
+      Serial.println(" seconds");
+      duration *= 1000;  // convert seconds to milliseconds
