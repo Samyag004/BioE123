@@ -1,0 +1,58 @@
+#sending to arduino
+
+
+#audio library set up
+pip install python-vlc
+sudo apt install vlc
+import vlc
+
+player = vlc.MediaPlayer("sound.mp3")
+player.play()
+
+#LCD  example
+import RPLCD
+import smbus
+import time
+from RPLCD.i2c import CharLCD
+
+lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2)
+
+lcd.write_string("Hello, Raspberry Pi!")
+time.sleep(2)
+lcd.clear()  
+#LCD timer and rpm
+sudo raspi-config
+sudo reboot
+sudo apt update
+sudo apt install -y i2c-tools python3-smbus
+pip install RPLCD
+
+#run this command to see if lcd is detected
+sudo i2cdetect -y 1
+
+import time
+from RPLCD.i2c import CharLCD
+
+# Initialize LCD with I2C address (Change 0x27 to your detected address if needed)
+lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2)
+
+def display_rpm_and_timer(rpm, duration):
+    for seconds in range(duration, -1, -1):  # Countdown timer
+        lcd.clear()
+        lcd.write_string(f"RPM: {rpm}")  # First line
+        lcd.crlf()  # Move to second line
+        lcd.write_string(f"Time: {seconds}s")  # Second line
+        time.sleep(1)  # Wait for 1 second
+
+# Example usage
+rpm_value = 5000  # Replace with actual RPM value
+timer_duration = 30  # Replace with actual duration
+display_rpm_and_timer(rpm_value, timer_duration)
+
+lcd.clear()
+lcd.write_string("Cycle Complete!")  # Show message when done
+time.sleep(3)
+lcd.clear()
+
+#running the script 
+python3 lcd_display.py
