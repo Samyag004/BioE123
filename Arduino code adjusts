@@ -1,5 +1,20 @@
 #getting the arduino to read data from the raspberry pi
 
+
+void setup() {
+  pinMode(motor_gate_pin, OUTPUT);
+  pinMode(comparator_pin, INPUT_PULLUP);
+
+  Serial.begin(9600);
+  while (!Serial);  // wait for Serial Monitor to open
+  Serial.println("Welcome to the V2 Centrifuge :), Enter desired motor speed in RPM (max 1500 RPM):");
+  lcd.println
+
+  attachInterrupt(digitalPinToInterrupt(comparator_pin), comparatorInterruptHandler, FALLING);
+}
+
+void loop() {
+  unsigned long current_time = millis();
 // STATE: WAITING – Wait for user input.
   if (state == WAITING) {
     analogWrite(motor_gate_pin, 0); // ensure motor is off
