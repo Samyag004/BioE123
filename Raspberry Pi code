@@ -1,3 +1,33 @@
+#setting up a bluetooth server 
+import bluetooth
+import serial
+
+# Connect to Arduino via USB Serial
+arduino = serial.Serial('/dev/ttyACM1', 115200, timeout=1)
+
+# Start Bluetooth Server
+server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+server_sock.bind(("", 1))
+server_sock.listen(1)
+
+print("Waiting for Bluetooth connection...")
+client_sock, address = server_sock.accept()
+print(f"Connected to {address}")
+
+try:
+    while True:
+        data = client_sock.recv(1024).decode("utf-8").strip()
+        if data:
+            print(f"Received from app: {data}")
+            arduino.write((data + "\n").encode())  # Send to Arduino
+
+except KeyboardInterrupt:
+    print("Disconnected")
+    client_sock.close()
+    server_sock.close()
+    arduino.close()
+
+
 #sending to arduino
 
 
