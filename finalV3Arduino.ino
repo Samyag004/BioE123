@@ -66,40 +66,67 @@ void loop() {
   unsigned long current_time = millis();
   
   // STATE: WAITING – Wait for user input.
-  if (state == WAITING) {
-    analogWrite(motor_gate_pin, 0); // ensure motor is off
-    if (Serial.available() > 0) {
-      // Read target RPM from serial
-      set_RPM = Serial.parseFloat();
-      Serial.print("Target RPM: ");
-      Serial.println(set_RPM);
-      
-      Serial.println("Enter centrifugation time in seconds (max 600s):");
-      while (Serial.available() == 0) ; // wait for time input
-      duration = Serial.parseFloat();
-      Serial.print("Centrifugation time: ");
-      Serial.print(duration);
-      Serial.println(" seconds");
-      duration *= 1000;  // convert seconds to milliseconds
-      
-      // Compute a feedforward (baseline) PWM value assuming linear mapping.
-      baseline_duty = (set_RPM / max_RPM) * 255;
-      
-      // Prepare for the ramp-up phase.
-      ramp_up_start_time = current_time;
-      // Reset PID variables and pulse counter.
-      integral = 0;
-      previous_error = 0;
-      noInterrupts();
-      comparator_counter = 0;
-      comparator_counter_previous = 0;
-      interrupts();
-      
-      state = RAMP_UP;
-      Serial.println("Ramping up, at max speed for 5s...");
-      analogWrite(motor_gate_pin, 255); // run at full power during ramp-up
+  // STATE: WAITING – Wait for user input.
+if (state == WAITING) {
+  analogWrite(motor_gate_pin, 0); // ensure motor is off
+
+  // Wait for target RPM input.
+  if (Serial.available() > 0) {
+    set_RPM = Serial.parseFloat();
+    Serial.print("Target RPM: ");
+    Serial.println(set_RPM);
+    
+    // Flush any remaining characters (like newline) from the Serial buffer.
+    while (Serial.available() > 0) {
+      Serial.read();
     }
+    
+    Serial.println("Enter centrifugation time in seconds (max 600s):");
+    
+    // Block until we get valid input.
+    while (true) {
+      // Wait until something is available.
+      while (Serial.available() == 0) {
+        delay(50);  // small delay to prevent tight looping
+      }
+      // Read input until newline.
+      String timeStr = Serial.readStringUntil('\n');
+      timeStr.trim();  // remove any extra whitespace
+      
+      // Convert input to a float.
+      duration = timeStr.toFloat();
+      
+      // If a valid positive number is entered, exit the loop.
+      if (duration > 0) {
+        break;
+      } else {
+        Serial.println("Invalid input. Please enter a positive time in seconds:");
+      }
+    }
+    
+    Serial.print("Centrifugation time: ");
+    Serial.print(duration);
+    Serial.println(" seconds");
+    duration *= 1000;  // convert seconds to milliseconds
+    
+    // Compute feedforward (baseline) PWM value assuming linear mapping.
+    baseline_duty = (set_RPM / max_RPM) * 255;
+    
+    // Prepare for the ramp-up phase.
+    ramp_up_start_time = millis();
+    // Reset PID variables and pulse counter.
+    integral = 0;
+    previous_error = 0;
+    noInterrupts();
+    comparator_counter = 0;
+    comparator_counter_previous = 0;
+    interrupts();
+    
+    state = RAMP_UP;
+    Serial.println("Ramping up, at max speed for 5s...");
+    analogWrite(motor_gate_pin, 255); // run at full power during ramp-up
   }
+}
   // STATE: RAMP_UP – Run motor at full power for a fixed period.
   else if (state == RAMP_UP) {
     analogWrite(motor_gate_pin, 255);
@@ -138,7 +165,7 @@ void loop() {
         
         // RPM = (pulses / magnet) * (60000 / elapsed_time)
         measured_RPM = (pulses / magnet) * (60000.0 / elapsed_time);
-
+        
         // Convert elapsed_time (ms) to seconds for the integral/derivative calculations.
         float dt = elapsed_time / 1000.0;
         
