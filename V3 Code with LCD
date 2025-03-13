@@ -60,6 +60,12 @@ void comparatorInterruptHandler() {
 }
 
 void setup() {
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Welcome to V2 Centrifuge");
+  lcd.setCursor(0, 1);
+  lcd.print("Waiting for input...");
   pinMode(motor_gate_pin, OUTPUT);
   pinMode(comparator_pin, INPUT_PULLUP);
   
@@ -67,12 +73,6 @@ void setup() {
   while (!Serial);  // wait for Serial Monitor to open
   Serial.println("Welcome to the V2 Centrifuge :), Enter desired motor speed in RPM (max 1500 RPM):");
     
-  lcd.init();
-  lcd.backlight();
-  lcd.setCursor(0, 0);
-  lcd.print("Welcome to V2 Centrifuge");
-  lcd.setCursor(0, 1);
-  lcd.print("Waiting for input...");
 
   attachInterrupt(digitalPinToInterrupt(comparator_pin), comparatorInterruptHandler, FALLING);
 }
