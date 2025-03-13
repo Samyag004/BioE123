@@ -1,19 +1,25 @@
-
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-// Initialize the LCD (20x4) with the I2C address (0x27 or 0x3F)
+// Set your LCD's I2C address and dimensions
+// Common addresses: 0x27 or 0x3F. If you have a 16x2 LCD, change 20,4 to 16,2.
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 void setup() {
-  lcd.init();          // Initialize the LCD
-  lcd.backlight();     // Turn on the backlight
-  lcd.setCursor(0, 0);
-  lcd.print("Welcome to V2 Centrifuge");
-  lcd.setCursor(0, 1);
-  lcd.print("Waiting for input...");
+  // Initialize the LCD
+  lcd.init();
+
+  // Turn on the LCD backlight
+  lcd.backlight();
+
+  // Display a simple test message
+  lcd.setCursor(0, 0); // First row, first column
+  lcd.print("Arduino Micro Test");
+
+  lcd.setCursor(0, 1); // Second row, first column
+  lcd.print("I2C LCD is working?");
 }
 
 void loop() {
-  // Nothing here yet
+  // Nothing to do in loop for this simple test
 }
