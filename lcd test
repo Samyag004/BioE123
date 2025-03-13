@@ -7,4 +7,8 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 
 lcd.init();
-lcd.print("hello");
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Welcome to V2 Centrifuge");
+  lcd.setCursor(0, 1);
+  lcd.print("Waiting for input...");
