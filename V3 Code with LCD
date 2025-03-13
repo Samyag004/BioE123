@@ -1,16 +1,4 @@
-/*#define SPEAKER_PIN 9  // Use a PWM-capable pin
 
-void setup() {
-  pinMode(SPEAKER_PIN, OUTPUT);
-}
-
-void loop() {
-  tone(SPEAKER_PIN, 1000);  // 1kHz tone
-  delay(1000);
-  noTone(SPEAKER_PIN);
-  delay(1000);
-}
-*/
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
